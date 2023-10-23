@@ -57,11 +57,6 @@ export class MedicalHistoriesService {
     return medicalHistory;
   }
 
-  async remove(id: number) {
-    await this.findOneOrFail(id);
-    await this.medicalHistoryRepository.delete(id);
-  }
-
   async update(id: number, updateMedicalHistoryDto: UpdateMedicalHistoryDto) {
     await this.findOneOrFail(id);
     return await this.medicalHistoryRepository.update(
@@ -69,4 +64,23 @@ export class MedicalHistoriesService {
       updateMedicalHistoryDto,
     );
   }
+
+  async remove(id: number) {
+    await this.findOneOrFail(id);
+    await this.medicalHistoryRepository.delete(id);
+  }
+
+  async patientMedicalHistories(patientId: number) {
+    return await this.medicalHistoryRepository.find({
+      where: {
+        patient: { userId: patientId },
+      },
+      relations: {
+        doctor: {
+          user: true,
+        }
+      },
+    });
+  }
+
 }

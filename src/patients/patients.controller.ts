@@ -8,6 +8,7 @@ import {
   Patch,
   Body,
   Query,
+  Param,
 } from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import { UserRole } from 'src/users/types';
@@ -33,38 +34,15 @@ export class PatientsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Patch()
+  @Patch('/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
   async update(
-    @Query('id') id: number,
+    @Param('id') id: number,
     @Body() updatePatientDto: UpdatePatientDto,
   ) {
-    await this.patientsService.update(id, updatePatientDto);
+    await this.patientsService.update(+id, updatePatientDto);
     return sendResponse('Appointment updated successfully', {});
   }
-
-  @HttpCode(HttpStatus.OK)
-  @Get('appointments')
-  async appointments(@Query('id') id: number) {
-    const appointments = await this.patientsService.appointments(+id);
-    return sendResponse('Appointments fetched successfully', appointments);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Get('prescriptions')
-  async prescriptions(@Query('id') id: number) {
-    const prescriptions = await this.patientsService.prescriptions(+id);
-    return sendResponse('Appointments fetched successfully', prescriptions);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Get('medical-histories')
-  async medicalHistories(@Query('id') id: number) {
-    const medicalHistories = await this.patientsService.medicalHistories(+id);
-    return sendResponse(
-      'Medical Histories fetched successfully',
-      medicalHistories,
-    );
-  }
+  
 }

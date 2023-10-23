@@ -11,7 +11,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async signIn(email: string, password: string) {
     const user = await this.validateUser(email, password);
@@ -34,9 +34,9 @@ export class AuthService {
       throw new UnauthorizedException('Email already taken');
     }
 
-    await this.usersService.create(createUserDto);
+    const { id } = await this.usersService.create(createUserDto);
 
-    return sendResponse('User created successfully', {});
+    return sendResponse('User created successfully', { id });
   }
 
   async validateUser(email: string, password: string) {

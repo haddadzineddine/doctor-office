@@ -5,6 +5,7 @@ import { Patient } from './entities/patient .entity';
 import { CreatePatientDto } from './dtos/create-patient.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdatePatientDto } from './dtos/update-patient.dto';
+import { Prescription } from 'src/prescriptions/entities/prescription.entity';
 
 @Injectable()
 export class PatientsService {
@@ -14,7 +15,10 @@ export class PatientsService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+
+    @InjectRepository(Prescription)
+    private prescriptionRepository: Repository<Prescription>,
+  ) { }
 
   async findOneOrFail(id: number) {
     const patient = await this.patientRepository.findOne({
@@ -51,20 +55,5 @@ export class PatientsService {
     await this.userRepository.update(id, {
       name,
     });
-  }
-
-  async appointments(id: number) {
-    const patient = await this.findOneOrFail(id);
-    return patient.appointments;
-  }
-
-  async prescriptions(id: number) {
-    const patient = await this.findOneOrFail(id);
-    return patient.prescriptions;
-  }
-
-  async medicalHistories(id: number) {
-    const patient = await this.findOneOrFail(id);
-    return patient.medicalHistories;
   }
 }

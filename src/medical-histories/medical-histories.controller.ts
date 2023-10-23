@@ -10,6 +10,7 @@ import {
   Query,
   Patch,
   Delete,
+  Param,
 } from '@nestjs/common';
 import { MedicalHistoriesService } from './medical-histories.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -21,13 +22,14 @@ import { AuthRequest } from 'src/auth/types';
 import { sendResponse } from 'src/helpers';
 import { UpdateMedicalHistoryDto } from './dtos/update-medical-histories.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { MedicalHistoryPresenter } from './presenters/medical-history.presenter';
 
 @ApiTags('Medical Histories APIs')
 @Controller('medical-histories')
 export class MedicalHistoriesController {
   constructor(
     private readonly medicalHistoriesService: MedicalHistoriesService,
-  ) {}
+  ) { }
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
@@ -47,8 +49,8 @@ export class MedicalHistoriesController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  // @UseGuasrds(AuthGuard, RolesGuard)
-  // @Roles(UserRole.DOCTOR)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.DOCTOR)
   async findOne(@Query('id') id: number) {
     const medicalHistory = await this.medicalHistoriesService.findOneOrFail(
       +id,
@@ -57,23 +59,34 @@ export class MedicalHistoriesController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Patch()
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(UserRole.DOCTOR)
+  @Patch('/:id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.DOCTOR)
   async update(
-    @Query('id') id: number,
+    @Param('id') id: number,
     @Body() updateMedicalHistoryDto: UpdateMedicalHistoryDto,
   ) {
-    await this.medicalHistoriesService.update(id, updateMedicalHistoryDto);
+    await this.medicalHistoriesService.update(+id, updateMedicalHistoryDto);
     return sendResponse('Medical History updated successfully', {});
   }
 
   @HttpCode(HttpStatus.OK)
-  @Delete()
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Roles(UserRole.DOCTOR)
-  async remove(@Query('id') id: number) {
+  @Delete('/:id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.DOCTOR)
+  async remove(@Param('id') id: number) {
     await this.medicalHistoriesService.remove(+id);
     return sendResponse('Medical History deleted successfully', {});
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('patient/:id')
+  async medicalHistories(@Param('id') id: number) {
+    const medicalHistories = await this.medicalHistoriesService.patientMedicalHistories(+id);
+    const medicalHistoriesPresenter = medicalHistories.map(medicalHistory => new MedicalHistoryPresenter(medicalHistory));
+    return sendResponse(
+      "Patient's Medical Histories fetched successfully",
+      medicalHistoriesPresenter,
+    );
   }
 }

@@ -14,7 +14,7 @@ export class AppointmentsService {
     private appointmentRepository: Repository<Appointment>,
     private doctorService: DoctorsService,
     private patientService: PatientsService,
-  ) {}
+  ) { }
 
   async create(doctorId: number, createAppointmentDto: CreateAppointmentDto) {
     const { patientId, ...rest } = createAppointmentDto;
@@ -72,6 +72,19 @@ export class AppointmentsService {
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
     await this.findOneOrFail(id);
     return await this.appointmentRepository.update(id, updateAppointmentDto);
+  }
+
+  async patientAppointments(patientId: number) {
+    return await this.appointmentRepository.find({
+      where: {
+        patient: { userId: patientId },
+      },
+      relations: {
+        doctor: {
+          user: true,
+        }
+      },
+    });
   }
 
   private async canCreateAppointment(
