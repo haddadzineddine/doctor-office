@@ -20,7 +20,7 @@ export class PrescriptionsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
   async create(@Body() createPrescriptionDto: CreatePrescriptionDto, @Request() req: AuthRequest) {
-    const doctorId = req.user.id;
+    const doctorId = req.user.sub;
     const { id } = await this.prescriptionsService.create(doctorId, createPrescriptionDto);
     return sendResponse('Prescription created successfully', { id });
   }

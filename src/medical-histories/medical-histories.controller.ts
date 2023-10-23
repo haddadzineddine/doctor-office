@@ -20,7 +20,7 @@ export class MedicalHistoriesController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
   async create(@Body() createMedicalHistoryDto: CreateMedicalHistoryDto, @Request() req: AuthRequest) {
-    const doctorId = req.user.id;
+    const doctorId = req.user.sub;
     const { id } = await this.medicalHistoriesService.create(doctorId, createMedicalHistoryDto);
     return sendResponse('Medical History created successfully', { id });
   }

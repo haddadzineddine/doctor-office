@@ -1,6 +1,6 @@
 
 export type PayLoad = {
-    id: number;
+    sub: number;
     email: string;
     role: string;
 };
