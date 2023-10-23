@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/users/entities/user.entity';
 import { Admin } from '../entities/admin.entity';
 
 export class AdminPresenter {
@@ -15,10 +14,10 @@ export class AdminPresenter {
   @ApiProperty()
   superAdmin: boolean;
 
-  constructor(user: User, admin: Admin) {
-    this.id = user.id;
-    this.name = user.name;
-    this.email = user.email;
+  constructor(admin: Admin) {
+    this.id = admin.userId;
+    this.name = admin.user.name;
+    this.email = admin.user.email;
     this.superAdmin = admin.superAdmin ? true : false;
   }
 }
