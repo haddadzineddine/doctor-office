@@ -1,3 +1,5 @@
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Patient } from 'src/patients/entities/patient .entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 @Entity()
@@ -13,4 +15,10 @@ export class MedicalHistory {
 
     @Column()
     notes: string;
+
+    @ManyToOne(() => Doctor, (doctor) => doctor.medicalHistories)
+    doctor: Doctor;
+
+    @ManyToOne(() => Patient, (patient) => patient.medicalHistories)
+    patient: Patient;
 }

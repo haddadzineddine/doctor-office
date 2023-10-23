@@ -66,4 +66,9 @@ export class PatientsService {
         return patient.prescriptions;
     }
 
+    async medicalHistories(id: number) {
+        const patient = await this.findOneOrFail(id);
+        return patient.medicalHistories;
+    }
+
 }

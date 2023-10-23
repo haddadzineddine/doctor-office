@@ -4,7 +4,6 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { sendResponse } from 'src/helpers';
-import { UserRole } from 'src/users/types';
 
 
 @Injectable()
@@ -18,12 +17,6 @@ export class AuthService {
     async signIn(email: string, password: string) {
 
         const user = await this.validateUser(email, password);
-
-        // forbid patients from logging in
-
-        if (user.role === UserRole.PATIENT) {
-            throw new UnauthorizedException('You are not authorized to login');
-        }
 
         const payload = { sub: user.id, email: user.email, role: user.role };
 

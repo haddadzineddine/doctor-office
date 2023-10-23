@@ -1,3 +1,5 @@
+import { Doctor } from 'src/doctors/entities/doctor.entity';
+import { Patient } from 'src/patients/entities/patient .entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 @Entity()
@@ -9,10 +11,16 @@ export class Prescription {
     medication: string;
 
     @Column()
-    dosage: string;
+    dosage: number;
 
     @Column()
-    frequency: string;
+    frequency: number;
+
+    @ManyToOne(() => Doctor, (doctor) => doctor.prescriptions)
+    doctor: Doctor;
+
+    @ManyToOne(() => Patient, (patient) => patient.prescriptions)
+    patient: Patient;
 
     @Column()
     startDate: Date;
