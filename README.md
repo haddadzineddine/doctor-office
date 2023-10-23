@@ -34,7 +34,7 @@ $ npm run start:dev
 #### - Using docker
 
 ```bash
-$ docker-compose up
+$ docker build -t doctor-office-api.
 ```
 
 ### 3. Run the app : 
