@@ -1,6 +1,6 @@
 import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionOptions';
 
-export const DATA_BASE_CONFIG: SqliteConnectionOptions = {
+export const DbConfig: SqliteConnectionOptions = {
   type: 'sqlite',
   database: 'db.sqlite',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],

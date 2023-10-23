@@ -1,28 +1,27 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Patient } from "../entities/patient .entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { Patient } from '../entities/patient .entity';
 
 export class PatientPresenter {
+  @ApiProperty()
+  id: number;
 
-    @ApiProperty()
-    id: number;
+  @ApiProperty()
+  name: string;
 
-    @ApiProperty()
-    name: string;
+  @ApiProperty()
+  email: string;
 
-    @ApiProperty()
-    email: string;
+  @ApiProperty()
+  address: string;
 
-    @ApiProperty()
-    address: string;
+  @ApiProperty()
+  dateOfBirth: Date;
 
-    @ApiProperty()
-    dateOfBirth: Date;
-
-    constructor(patient: Patient) {
-        this.id = patient.userId;
-        this.name = patient.user.name;
-        this.email = patient.user.email;
-        this.address = patient.address;
-        this.dateOfBirth = patient.dateOfBirth;
-    }
+  constructor(patient: Patient) {
+    this.id = patient.userId;
+    this.name = patient.user.name;
+    this.email = patient.user.email;
+    this.address = patient.address;
+    this.dateOfBirth = patient.dateOfBirth;
+  }
 }

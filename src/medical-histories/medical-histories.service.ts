@@ -78,9 +78,8 @@ export class MedicalHistoriesService {
       relations: {
         doctor: {
           user: true,
-        }
+        },
       },
     });
   }
-
 }

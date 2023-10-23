@@ -27,7 +27,7 @@ import { AppointmentPresenter } from './presenters/appointment.presenter';
 @ApiTags('Appointments APIs')
 @Controller('appointments')
 export class AppointmentsController {
-  constructor(private readonly appointmentsService: AppointmentsService) { }
+  constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
@@ -51,7 +51,10 @@ export class AppointmentsController {
   @Roles(UserRole.DOCTOR)
   async findOne(@Param('id') id: number) {
     const appointment = await this.appointmentsService.findOneOrFail(+id);
-    return sendResponse('Appointment fetched successfully', new AppointmentPresenter(appointment));
+    return sendResponse(
+      'Appointment fetched successfully',
+      new AppointmentPresenter(appointment),
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -78,10 +81,14 @@ export class AppointmentsController {
   @HttpCode(HttpStatus.OK)
   @Get('patient/:id')
   async appointments(@Param('id') id: number) {
-    const patientAppointments = await this.appointmentsService.patientAppointments(+id);
-    const patientAppointmentsPresenter = patientAppointments.map(appointment => new AppointmentPresenter(appointment));
-    return sendResponse("Patient's Appointments fetched successfully", patientAppointmentsPresenter);
+    const patientAppointments =
+      await this.appointmentsService.patientAppointments(+id);
+    const patientAppointmentsPresenter = patientAppointments.map(
+      (appointment) => new AppointmentPresenter(appointment),
+    );
+    return sendResponse(
+      "Patient's Appointments fetched successfully",
+      patientAppointmentsPresenter,
+    );
   }
-
-
 }

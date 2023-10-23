@@ -5,7 +5,6 @@ import { Patient } from './entities/patient .entity';
 import { CreatePatientDto } from './dtos/create-patient.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdatePatientDto } from './dtos/update-patient.dto';
-import { Prescription } from 'src/prescriptions/entities/prescription.entity';
 
 @Injectable()
 export class PatientsService {
@@ -15,17 +14,22 @@ export class PatientsService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+  ) {}
 
-    @InjectRepository(Prescription)
-    private prescriptionRepository: Repository<Prescription>,
-  ) { }
+  async findAll() {
+    const patients = await this.patientRepository.find({
+      relations: ['user'],
+    });
+
+    return patients;
+  }
 
   async findOneOrFail(id: number) {
     const patient = await this.patientRepository.findOne({
       where: {
         user: { id },
       },
-      relations: ['user', 'appointments', 'prescriptions'],
+      relations: ['user'], // ['appointments', 'prescriptions'],
     });
 
     if (!patient) {
@@ -50,10 +54,15 @@ export class PatientsService {
   async update(id: number, updatePatientDto: UpdatePatientDto) {
     await this.findOneOrFail(id);
     const { name, ...rest } = updatePatientDto;
+    7;
+    if (Object.keys(rest).length != 0) {
+      await this.patientRepository.update(id, rest);
+    }
 
-    await this.patientRepository.update(id, rest);
-    await this.userRepository.update(id, {
-      name,
-    });
+    if (name) {
+      await this.userRepository.update(id, {
+        name,
+      });
+    }
   }
 }

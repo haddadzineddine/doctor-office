@@ -27,7 +27,7 @@ import { PrescriptionsPresenter } from './presenters/prescription.presenter';
 @ApiTags('Prescriptions APIs')
 @Controller('prescriptions')
 export class PrescriptionsController {
-  constructor(private readonly prescriptionsService: PrescriptionsService) { }
+  constructor(private readonly prescriptionsService: PrescriptionsService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
@@ -51,7 +51,10 @@ export class PrescriptionsController {
   @Roles(UserRole.DOCTOR)
   async findOne(@Param('id') id: number) {
     const prescription = await this.prescriptionsService.findOneOrFail(+id);
-    return sendResponse('Prescription fetched successfully', new PrescriptionsPresenter(prescription));
+    return sendResponse(
+      'Prescription fetched successfully',
+      new PrescriptionsPresenter(prescription),
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -78,9 +81,14 @@ export class PrescriptionsController {
   @HttpCode(HttpStatus.OK)
   @Get('patient/:id')
   async prescriptions(@Param('id') id: number) {
-    const patientPrescriptions = await this.prescriptionsService.patientPrescriptions(+id);
-    const patientPrescriptionsPresenter = patientPrescriptions.map(prescription => new PrescriptionsPresenter(prescription));
-    return sendResponse("Patient's Prescriptions fetched successfully", patientPrescriptionsPresenter);
+    const patientPrescriptions =
+      await this.prescriptionsService.patientPrescriptions(+id);
+    const patientPrescriptionsPresenter = patientPrescriptions.map(
+      (prescription) => new PrescriptionsPresenter(prescription),
+    );
+    return sendResponse(
+      "Patient's Prescriptions fetched successfully",
+      patientPrescriptionsPresenter,
+    );
   }
-
 }

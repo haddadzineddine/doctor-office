@@ -29,7 +29,7 @@ import { MedicalHistoryPresenter } from './presenters/medical-history.presenter'
 export class MedicalHistoriesController {
   constructor(
     private readonly medicalHistoriesService: MedicalHistoriesService,
-  ) { }
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
@@ -82,8 +82,11 @@ export class MedicalHistoriesController {
   @HttpCode(HttpStatus.OK)
   @Get('patient/:id')
   async medicalHistories(@Param('id') id: number) {
-    const medicalHistories = await this.medicalHistoriesService.patientMedicalHistories(+id);
-    const medicalHistoriesPresenter = medicalHistories.map(medicalHistory => new MedicalHistoryPresenter(medicalHistory));
+    const medicalHistories =
+      await this.medicalHistoriesService.patientMedicalHistories(+id);
+    const medicalHistoriesPresenter = medicalHistories.map(
+      (medicalHistory) => new MedicalHistoryPresenter(medicalHistory),
+    );
     return sendResponse(
       "Patient's Medical Histories fetched successfully",
       medicalHistoriesPresenter,

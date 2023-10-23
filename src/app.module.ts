@@ -5,14 +5,16 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { MedicalHistoriesModule } from './medical-histories/medical-histories.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DATA_BASE_CONFIG } from './config/database';
+import { DbConfig } from './config/database';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AdminsModule } from './admins/admins.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(DATA_BASE_CONFIG),
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(DbConfig),
     DoctorsModule,
     PatientsModule,
     AppointmentsModule,

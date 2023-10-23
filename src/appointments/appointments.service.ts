@@ -14,7 +14,7 @@ export class AppointmentsService {
     private appointmentRepository: Repository<Appointment>,
     private doctorService: DoctorsService,
     private patientService: PatientsService,
-  ) { }
+  ) {}
 
   async create(doctorId: number, createAppointmentDto: CreateAppointmentDto) {
     const { patientId, ...rest } = createAppointmentDto;
@@ -82,7 +82,7 @@ export class AppointmentsService {
       relations: {
         doctor: {
           user: true,
-        }
+        },
       },
     });
   }

@@ -12,4 +12,4 @@ import { Prescription } from 'src/prescriptions/entities/prescription.entity';
   providers: [PatientsService],
   exports: [PatientsService],
 })
-export class PatientsModule { }
+export class PatientsModule {}
