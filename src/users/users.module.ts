@@ -11,9 +11,14 @@ import { DoctorsModule } from 'src/doctors/doctors.module';
 import { AdminsModule } from 'src/admins/admins.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Admin, Doctor, Patient]), DoctorsModule, PatientsModule, AdminsModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Admin, Doctor, Patient]),
+    DoctorsModule,
+    PatientsModule,
+    AdminsModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [UsersService]
+  exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}

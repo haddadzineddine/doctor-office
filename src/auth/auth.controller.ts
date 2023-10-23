@@ -7,7 +7,7 @@ import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 @ApiTags('Auth APIs')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -16,11 +16,9 @@ export class AuthController {
     return await this.authService.signIn(email, password);
   }
 
-
   @HttpCode(HttpStatus.CREATED)
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
     return await this.authService.signUp(createUserDto);
   }
-
 }

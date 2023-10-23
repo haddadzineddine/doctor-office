@@ -4,21 +4,21 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
 @Entity()
 export class MedicalHistory {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    diagnosis: string;
+  @Column()
+  diagnosis: string;
 
-    @Column()
-    treatment: string;
+  @Column()
+  treatment: string;
 
-    @Column()
-    notes: string;
+  @Column()
+  notes: string;
 
-    @ManyToOne(() => Doctor, (doctor) => doctor.medicalHistories)
-    doctor: Doctor;
+  @ManyToOne(() => Doctor, (doctor) => doctor.medicalHistories)
+  doctor: Doctor;
 
-    @ManyToOne(() => Patient, (patient) => patient.medicalHistories)
-    patient: Patient;
+  @ManyToOne(() => Patient, (patient) => patient.medicalHistories)
+  patient: Patient;
 }

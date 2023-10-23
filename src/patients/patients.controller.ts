@@ -1,4 +1,14 @@
-import { Controller, HttpStatus, HttpCode, Post, Get, UseGuards, Patch, Body, Query } from '@nestjs/common';
+import {
+  Controller,
+  HttpStatus,
+  HttpCode,
+  Post,
+  Get,
+  UseGuards,
+  Patch,
+  Body,
+  Query,
+} from '@nestjs/common';
 import { PatientsService } from './patients.service';
 import { UserRole } from 'src/users/types';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -11,7 +21,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Patients APIs')
 @Controller('patients')
 export class PatientsController {
-  constructor(private readonly patientsService: PatientsService) { }
+  constructor(private readonly patientsService: PatientsService) {}
 
   @HttpCode(HttpStatus.OK)
   @Get()
@@ -22,12 +32,14 @@ export class PatientsController {
     return sendResponse('Appointment fetched successfully', patient);
   }
 
-
   @HttpCode(HttpStatus.OK)
   @Patch()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
-  async update(@Query('id') id: number, @Body() updatePatientDto: UpdatePatientDto) {
+  async update(
+    @Query('id') id: number,
+    @Body() updatePatientDto: UpdatePatientDto,
+  ) {
     await this.patientsService.update(id, updatePatientDto);
     return sendResponse('Appointment updated successfully', {});
   }
@@ -50,8 +62,9 @@ export class PatientsController {
   @Get('medical-histories')
   async medicalHistories(@Query('id') id: number) {
     const medicalHistories = await this.patientsService.medicalHistories(+id);
-    return sendResponse('Medical Histories fetched successfully', medicalHistories);
+    return sendResponse(
+      'Medical Histories fetched successfully',
+      medicalHistories,
+    );
   }
-
-
 }

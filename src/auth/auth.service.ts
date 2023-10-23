@@ -6,50 +6,48 @@ import { UnauthorizedException } from '@nestjs/common';
 import { sendResponse } from 'src/helpers';
 import { PayLoad } from './types';
 
-
 @Injectable()
 export class AuthService {
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService
-    ) { }
+  async signIn(email: string, password: string) {
+    const user = await this.validateUser(email, password);
 
-    async signIn(email: string, password: string) {
-
-        const user = await this.validateUser(email, password);
-
-        const payload: PayLoad = { sub: user.id, email: user.email, role: user.role };
-
-        return sendResponse('User logged in successfully', {
-            access_token: await this.jwtService.signAsync(payload),
-        });
+    const payload: PayLoad = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
     };
 
-    async signUp(createUserDto: CreateUserDto) {
+    return sendResponse('User logged in successfully', {
+      access_token: await this.jwtService.signAsync(payload),
+    });
+  }
 
-        const { email } = createUserDto;
+  async signUp(createUserDto: CreateUserDto) {
+    const { email } = createUserDto;
 
-        if (await this.usersService.isEmailTaken(email)) {
-            throw new UnauthorizedException('Email already taken');
-        }
-
-        await this.usersService.create(createUserDto);
-
-        return sendResponse('User created successfully', {});
-    };
-
-
-    async validateUser(email: string, password: string) {
-        const user = await this.usersService.findOneByEmailOrFail(email);
-
-        const passwordIsValid = await user.validatePassword(password);
-
-        if (!passwordIsValid) {
-            throw new UnauthorizedException('Invalid password');
-        }
-
-        return user;
+    if (await this.usersService.isEmailTaken(email)) {
+      throw new UnauthorizedException('Email already taken');
     }
 
+    await this.usersService.create(createUserDto);
+
+    return sendResponse('User created successfully', {});
+  }
+
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.findOneByEmailOrFail(email);
+
+    const passwordIsValid = await user.validatePassword(password);
+
+    if (!passwordIsValid) {
+      throw new UnauthorizedException('Invalid password');
+    }
+
+    return user;
+  }
 }

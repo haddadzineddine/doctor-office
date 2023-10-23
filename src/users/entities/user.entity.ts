@@ -4,26 +4,25 @@ import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({ unique: true })
-    email: string;
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ select: false })
-    password: string;
+  @Column({ select: false })
+  password: string;
 
-    @Column({
-        enum: UserRole,
-        default: UserRole.ADMIN,
-    })
-    role: UserRole;
+  @Column({
+    enum: UserRole,
+    default: UserRole.ADMIN,
+  })
+  role: UserRole;
 
-
-    async validatePassword(password: string): Promise<boolean> {
-        return bcrypt.compare(password, this.password);
-    }
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
 }

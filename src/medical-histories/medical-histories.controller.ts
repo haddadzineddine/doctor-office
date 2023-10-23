@@ -1,4 +1,16 @@
-import { Controller, HttpCode, HttpStatus, Post, UseGuards, Body, Request, Get, Query, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+  Body,
+  Request,
+  Get,
+  Query,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { MedicalHistoriesService } from './medical-histories.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/users/guards/roles.guard';
@@ -13,15 +25,23 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Medical Histories APIs')
 @Controller('medical-histories')
 export class MedicalHistoriesController {
-  constructor(private readonly medicalHistoriesService: MedicalHistoriesService) { }
+  constructor(
+    private readonly medicalHistoriesService: MedicalHistoriesService,
+  ) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
-  async create(@Body() createMedicalHistoryDto: CreateMedicalHistoryDto, @Request() req: AuthRequest) {
+  async create(
+    @Body() createMedicalHistoryDto: CreateMedicalHistoryDto,
+    @Request() req: AuthRequest,
+  ) {
     const doctorId = req.user.sub;
-    const { id } = await this.medicalHistoriesService.create(doctorId, createMedicalHistoryDto);
+    const { id } = await this.medicalHistoriesService.create(
+      doctorId,
+      createMedicalHistoryDto,
+    );
     return sendResponse('Medical History created successfully', { id });
   }
 
@@ -30,7 +50,9 @@ export class MedicalHistoriesController {
   // @UseGuasrds(AuthGuard, RolesGuard)
   // @Roles(UserRole.DOCTOR)
   async findOne(@Query('id') id: number) {
-    const medicalHistory = await this.medicalHistoriesService.findOneOrFail(+id);
+    const medicalHistory = await this.medicalHistoriesService.findOneOrFail(
+      +id,
+    );
     return sendResponse('Medical History fetched successfully', medicalHistory);
   }
 
@@ -38,7 +60,10 @@ export class MedicalHistoriesController {
   @Patch()
   // @UseGuards(AuthGuard, RolesGuard)
   // @Roles(UserRole.DOCTOR)
-  async update(@Query('id') id: number, @Body() updateMedicalHistoryDto: UpdateMedicalHistoryDto) {
+  async update(
+    @Query('id') id: number,
+    @Body() updateMedicalHistoryDto: UpdateMedicalHistoryDto,
+  ) {
     await this.medicalHistoriesService.update(id, updateMedicalHistoryDto);
     return sendResponse('Medical History updated successfully', {});
   }

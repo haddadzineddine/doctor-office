@@ -1,4 +1,16 @@
-import { Controller, HttpStatus, HttpCode, Post, UseGuards, Body, Request, Get, Query, Patch, Delete } from '@nestjs/common';
+import {
+  Controller,
+  HttpStatus,
+  HttpCode,
+  Post,
+  UseGuards,
+  Body,
+  Request,
+  Get,
+  Query,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { PrescriptionsService } from './prescriptions.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/users/guards/roles.guard';
@@ -13,15 +25,21 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Prescriptions APIs')
 @Controller('prescriptions')
 export class PrescriptionsController {
-  constructor(private readonly prescriptionsService: PrescriptionsService) { }
+  constructor(private readonly prescriptionsService: PrescriptionsService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
-  async create(@Body() createPrescriptionDto: CreatePrescriptionDto, @Request() req: AuthRequest) {
+  async create(
+    @Body() createPrescriptionDto: CreatePrescriptionDto,
+    @Request() req: AuthRequest,
+  ) {
     const doctorId = req.user.sub;
-    const { id } = await this.prescriptionsService.create(doctorId, createPrescriptionDto);
+    const { id } = await this.prescriptionsService.create(
+      doctorId,
+      createPrescriptionDto,
+    );
     return sendResponse('Prescription created successfully', { id });
   }
 
@@ -38,7 +56,10 @@ export class PrescriptionsController {
   @Patch()
   // @UseGuards(AuthGuard, RolesGuard)
   // @Roles(UserRole.DOCTOR)
-  async update(@Query('id') id: number, @Body() updatePrescriptionDto: UpdatePrescriptionDto) {
+  async update(
+    @Query('id') id: number,
+    @Body() updatePrescriptionDto: UpdatePrescriptionDto,
+  ) {
     await this.prescriptionsService.update(id, updatePrescriptionDto);
     return sendResponse('Prescription updated successfully', {});
   }

@@ -20,9 +20,9 @@ import { AdminsModule } from './admins/admins.module';
     MedicalHistoriesModule,
     AuthModule,
     UsersModule,
-    AdminsModule
+    AdminsModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

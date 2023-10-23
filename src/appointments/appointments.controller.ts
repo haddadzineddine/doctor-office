@@ -9,7 +9,7 @@ import {
   Body,
   HttpStatus,
   HttpCode,
-  Request
+  Request,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dtos/create-appointment.dto';
@@ -25,16 +25,21 @@ import { AuthRequest, PayLoad } from 'src/auth/types';
 @ApiTags('Appointments APIs')
 @Controller('appointments')
 export class AppointmentsController {
-  constructor(private readonly appointmentsService: AppointmentsService) { }
-
+  constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
-  async create(@Body() createAppointmentDto: CreateAppointmentDto, @Request() req: AuthRequest) {
-    const doctorId = req.user.id;
-    const { id } = await this.appointmentsService.create(doctorId, createAppointmentDto);
+  async create(
+    @Body() createAppointmentDto: CreateAppointmentDto,
+    @Request() req: AuthRequest,
+  ) {
+    const doctorId = req.user.sub;
+    const { id } = await this.appointmentsService.create(
+      doctorId,
+      createAppointmentDto,
+    );
     return sendResponse('Appointment created successfully', { id });
   }
 
@@ -51,7 +56,10 @@ export class AppointmentsController {
   @Patch()
   // @UseGuards(AuthGuard, RolesGuard)
   // @Roles(UserRole.DOCTOR)
-  async update(@Query('id') id: number, @Body() updateAppointmentDto: UpdateAppointmentDto) {
+  async update(
+    @Query('id') id: number,
+    @Body() updateAppointmentDto: UpdateAppointmentDto,
+  ) {
     await this.appointmentsService.update(id, updateAppointmentDto);
     return sendResponse('Appointment updated successfully', {});
   }
@@ -64,5 +72,4 @@ export class AppointmentsController {
     await this.appointmentsService.remove(+id);
     return sendResponse('Appointment deleted successfully', {});
   }
-
 }

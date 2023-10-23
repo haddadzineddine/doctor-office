@@ -9,62 +9,55 @@ import { UpdatePrescriptionDto } from './dtos/update-prescription.dto';
 
 @Injectable()
 export class PrescriptionsService {
+  constructor(
+    @InjectRepository(Prescription)
+    private prescriptionRepository: Repository<Prescription>,
+    private doctorService: DoctorsService,
+    private patientService: PatientsService,
+  ) {}
 
-    constructor(
-        @InjectRepository(Prescription)
-        private prescriptionRepository: Repository<Prescription>,
-        private doctorService: DoctorsService,
-        private patientService: PatientsService
-    ) { }
+  async create(doctorId: number, createPrescriptionDto: CreatePrescriptionDto) {
+    const { patientId, ...rest } = createPrescriptionDto;
 
+    const doctor = await this.doctorService.findOneOrFail(doctorId);
+    const patient = await this.patientService.findOneOrFail(patientId);
 
-    async create(doctorId: number, createPrescriptionDto: CreatePrescriptionDto) {
+    return await this.prescriptionRepository.save({
+      doctor,
+      patient,
+      ...rest,
+    });
+  }
 
-        const { patientId, ...rest } = createPrescriptionDto;
+  async findOneOrFail(id: number) {
+    const prescription = await this.prescriptionRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        doctor: {
+          user: true,
+        },
+        patient: {
+          user: true,
+        },
+      },
+    });
 
-        const doctor = await this.doctorService.findOneOrFail(doctorId);
-        const patient = await this.patientService.findOneOrFail(patientId);
-
-        return await this.prescriptionRepository.save({
-            doctor,
-            patient,
-            ...rest
-        });
+    if (!prescription) {
+      throw new HttpException('Prescription not found', HttpStatus.NOT_FOUND);
     }
 
-    async findOneOrFail(id: number) {
-        const prescription = await this.prescriptionRepository.findOne(
-            {
-                where: {
-                    id
-                },
-                relations: {
-                    doctor: {
-                        user: true
-                    },
-                    patient: {
-                        user: true
-                    }
-                }
-            }
-        );
+    return prescription;
+  }
 
-        if (!prescription) {
-            throw new HttpException('Prescription not found', HttpStatus.NOT_FOUND);
-        }
+  async remove(id: number) {
+    await this.findOneOrFail(id);
+    await this.prescriptionRepository.delete(id);
+  }
 
-        return prescription;
-    }
-
-    async remove(id: number) {
-        await this.findOneOrFail(id);
-        await this.prescriptionRepository.delete(id);
-    };
-
-    async update(id: number, updatePrescriptionDto: UpdatePrescriptionDto) {
-        await this.findOneOrFail(id);
-        return await this.prescriptionRepository.update(id, updatePrescriptionDto);
-    };
-
-
+  async update(id: number, updatePrescriptionDto: UpdatePrescriptionDto) {
+    await this.findOneOrFail(id);
+    return await this.prescriptionRepository.update(id, updatePrescriptionDto);
+  }
 }

@@ -11,54 +11,57 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private doctorService: DoctorsService,
+    private patientService: PatientsService,
+    private adminsService: AdminsService,
+  ) {}
 
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-        private doctorService: DoctorsService,
-        private patientService: PatientsService,
-        private adminsService: AdminsService,
-    ) { }
+  async findOneByEmailOrFail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
 
-    async findOneByEmailOrFail(email: string) {
-        const user = await this.userRepository.findOneBy({ email });
-
-        if (!user) {
-            throw new HttpException('User not found', 404);
-        }
-
-        return user;
+    if (!user) {
+      throw new HttpException('User not found', 404);
     }
 
-    async isEmailTaken(email: string) {
-        const user = await this.userRepository.findOneBy({ email });
-        return !!user;
+    return user;
+  }
+
+  async isEmailTaken(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    return !!user;
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    const { name, email, password, role } = createUserDto;
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await this.userRepository.save({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    if (role === UserRole.DOCTOR) {
+      const { specialization } = createUserDto;
+      await this.doctorService.create(user, { specialization });
     }
 
-    async create(createUserDto: CreateUserDto) {
-
-        const { name, email, password, role } = createUserDto;
-
-        const salt = await bcrypt.genSalt();
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const user = await this.userRepository.save({ name, email, password: hashedPassword, role });
-
-        if (role === UserRole.DOCTOR) {
-            const { specialization } = createUserDto;
-            await this.doctorService.create(user, { specialization });
-        }
-
-        if (role === UserRole.PATIENT) {
-            const { dateOfBirth, address } = createUserDto;
-            await this.patientService.create(user, { dateOfBirth, address });
-        }
-
-        if (role === UserRole.ADMIN) {
-            const { superAdmin } = createUserDto;
-            await this.adminsService.create(user, { superAdmin });
-        }
-
-        return user;
+    if (role === UserRole.PATIENT) {
+      const { dateOfBirth, address } = createUserDto;
+      await this.patientService.create(user, { dateOfBirth, address });
     }
+
+    if (role === UserRole.ADMIN) {
+      const { superAdmin } = createUserDto;
+      await this.adminsService.create(user, { superAdmin });
+    }
+
+    return user;
+  }
 }

@@ -1,4 +1,3 @@
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, HttpException } from '@nestjs/common';
 import { Repository } from 'typeorm';
@@ -9,66 +8,63 @@ import { UpdatePatientDto } from './dtos/update-patient.dto';
 
 @Injectable()
 export class PatientsService {
+  constructor(
+    @InjectRepository(Patient)
+    private patientRepository: Repository<Patient>,
 
-    constructor(
-        @InjectRepository(Patient)
-        private patientRepository: Repository<Patient>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
-        @InjectRepository(User)
-        private userRepository: Repository<User>
-    ) { }
+  async findOneOrFail(id: number) {
+    const patient = await this.patientRepository.findOne({
+      where: {
+        user: { id },
+      },
+      relations: ['user', 'appointments', 'prescriptions'],
+    });
 
-
-    async findOneOrFail(id: number) {
-        const patient = await this.patientRepository.findOne({
-            where: {
-                user: { id }
-            },
-            relations: ['user', 'appointments', 'prescriptions']
-        });
-
-        if (!patient) {
-            throw new HttpException('Patient not found', 404);
-        }
-
-        return patient;
+    if (!patient) {
+      throw new HttpException('Patient not found', 404);
     }
 
-    async create(user: User, createPatientDto: CreatePatientDto) {
-        return await this.patientRepository.save({
-            user,
-            ...createPatientDto
-        });
-    }
+    return patient;
+  }
 
-    async remove(id: number) {
-        await this.findOneOrFail(id);
-        await this.patientRepository.delete(id);
-    }
+  async create(user: User, createPatientDto: CreatePatientDto) {
+    return await this.patientRepository.save({
+      user,
+      ...createPatientDto,
+    });
+  }
 
-    async update(id: number, updatePatientDto: UpdatePatientDto) {
-        await this.findOneOrFail(id);
-        const { name, ...rest } = updatePatientDto;
+  async remove(id: number) {
+    await this.findOneOrFail(id);
+    await this.patientRepository.delete(id);
+  }
 
-        await this.patientRepository.update(id, rest);
-        await this.userRepository.update(id, {
-            name
-        });
-    }
+  async update(id: number, updatePatientDto: UpdatePatientDto) {
+    await this.findOneOrFail(id);
+    const { name, ...rest } = updatePatientDto;
 
-    async appointments(id: number) {
-        const patient = await this.findOneOrFail(id);
-        return patient.appointments;
-    }
+    await this.patientRepository.update(id, rest);
+    await this.userRepository.update(id, {
+      name,
+    });
+  }
 
-    async prescriptions(id: number) {
-        const patient = await this.findOneOrFail(id);
-        return patient.prescriptions;
-    }
+  async appointments(id: number) {
+    const patient = await this.findOneOrFail(id);
+    return patient.appointments;
+  }
 
-    async medicalHistories(id: number) {
-        const patient = await this.findOneOrFail(id);
-        return patient.medicalHistories;
-    }
+  async prescriptions(id: number) {
+    const patient = await this.findOneOrFail(id);
+    return patient.prescriptions;
+  }
 
+  async medicalHistories(id: number) {
+    const patient = await this.findOneOrFail(id);
+    return patient.medicalHistories;
+  }
 }

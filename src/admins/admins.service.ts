@@ -7,26 +7,24 @@ import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AdminsService {
+  constructor(
+    @InjectRepository(Admin)
+    private adminRepository: Repository<Admin>,
+  ) {}
 
-    constructor(
-        @InjectRepository(Admin)
-        private adminRepository: Repository<Admin>
-    ) { }
+  async findOneOrFail(id: number) {
+    return await this.adminRepository.findOneOrFail({
+      where: {
+        user: { id },
+      },
+      relations: ['user'],
+    });
+  }
 
-
-    async findOneOrFail(id: number) {
-        return await this.adminRepository.findOneOrFail({
-            where: {
-                user: { id }
-            },
-            relations: ['user']
-        });
-    }
-
-    async create(user: User, createAdminDto: CreateAdminDto) {
-        return await this.adminRepository.save({
-            user,
-            ...createAdminDto
-        });
-    }
+  async create(user: User, createAdminDto: CreateAdminDto) {
+    return await this.adminRepository.save({
+      user,
+      ...createAdminDto,
+    });
+  }
 }

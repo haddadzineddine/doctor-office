@@ -7,32 +7,30 @@ import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class DoctorsService {
+  constructor(
+    @InjectRepository(Doctor)
+    private doctorRepository: Repository<Doctor>,
+  ) {}
 
-    constructor(
-        @InjectRepository(Doctor)
-        private doctorRepository: Repository<Doctor>
-    ) { }
+  async findOneOrFail(id: number) {
+    const doctor = await this.doctorRepository.findOne({
+      where: {
+        user: { id },
+      },
+      relations: ['user'],
+    });
 
-
-    async findOneOrFail(id: number) {
-        const doctor = await this.doctorRepository.findOne({
-            where: {
-                user: { id }
-            },
-            relations: ['user']
-        });
-
-        if (!doctor) {
-            throw new HttpException('Doctor not found', 404);
-        }
-
-        return doctor;
+    if (!doctor) {
+      throw new HttpException('Doctor not found', 404);
     }
 
-    async create(user: User, createDoctorDto: CreateDoctorDto) {
-        return await this.doctorRepository.save({
-            user,
-            ...createDoctorDto
-        });
-    }
+    return doctor;
+  }
+
+  async create(user: User, createDoctorDto: CreateDoctorDto) {
+    return await this.doctorRepository.save({
+      user,
+      ...createDoctorDto,
+    });
+  }
 }

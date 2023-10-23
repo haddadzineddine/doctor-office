@@ -7,8 +7,12 @@ import { DoctorsModule } from 'src/doctors/doctors.module';
 import { PatientsModule } from 'src/patients/patients.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Prescription]), DoctorsModule, PatientsModule],
+  imports: [
+    TypeOrmModule.forFeature([Prescription]),
+    DoctorsModule,
+    PatientsModule,
+  ],
   controllers: [PrescriptionsController],
   providers: [PrescriptionsService],
 })
-export class PrescriptionsModule { }
+export class PrescriptionsModule {}
