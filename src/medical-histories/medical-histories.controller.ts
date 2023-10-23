@@ -7,7 +7,6 @@ import {
   Body,
   Request,
   Get,
-  Query,
   Patch,
   Delete,
   Param,
@@ -48,10 +47,10 @@ export class MedicalHistoriesController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get()
+  @Get('/:id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR)
-  async findOne(@Query('id') id: number) {
+  async findOne(@Param('id') id: number) {
     const medicalHistory = await this.medicalHistoriesService.findOneOrFail(
       +id,
     );

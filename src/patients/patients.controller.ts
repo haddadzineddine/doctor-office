@@ -27,7 +27,7 @@ export class PatientsController {
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.DOCTOR, UserRole.ADMIN)
-  async findAll(@Param('id') id: number) {
+  async findAll() {
     const patients = await this.patientsService.findAll();
     const patientsPresenters = patients.map(
       (patient) => new PatientPresenter(patient),

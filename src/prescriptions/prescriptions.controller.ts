@@ -7,7 +7,6 @@ import {
   Body,
   Request,
   Get,
-  Query,
   Patch,
   Delete,
   Param,
